@@ -60,6 +60,34 @@ uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
 
 서버가 실행되면 http://localhost:8000 에서 API에 접근할 수 있습니다.
 
+### Docker를 사용한 실행
+
+1. Docker와 Docker Compose 설치 (미설치 시)
+
+2. Docker 이미지 빌드 및 컨테이너 실행
+
+```bash
+docker compose up -d --build
+```
+
+3. 서비스 상태 확인
+
+```bash
+docker compose ps
+```
+
+4. 로그 확인
+
+```bash
+docker compose logs -f
+```
+
+5. 서비스 중지
+
+```bash
+docker compose down
+```
+
 ## API 문서
 
 API 문서는 다음 URL에서 확인할 수 있습니다:
@@ -111,6 +139,9 @@ API 문서는 다음 URL에서 확인할 수 있습니다:
   /data
     /documents             # 원본 문서 저장 디렉토리
     /chroma_db             # Vector Store 데이터 디렉토리
+  Dockerfile               # Docker 이미지 빌드 파일
+  docker-compose.yml       # Docker Compose 설정 파일
+  .dockerignore            # Docker 빌드 제외 파일 목록
   requirements.txt         # 의존성 패키지 목록
   .env                     # 환경 변수 파일 (API 키 등)
   README.md                # 프로젝트 설명서
@@ -128,6 +159,34 @@ API 문서는 다음 URL에서 확인할 수 있습니다:
 - `RETRIEVER_K` - 검색 결과 개수 (기본값: 3)
 - `EMBEDDING_MODEL_NAME` - 임베딩 모델 이름 (기본값: text-embedding-3-small)
 - `LLM_MODEL_NAME` - LLM 모델 이름 (기본값: gpt-4o)
+
+## 도커 환경 구성
+
+도커 환경에서는 다음 파일들이 사용됩니다:
+
+- `Dockerfile`: 컨테이너 이미지 빌드 정의
+- `docker-compose.yml`: 서비스 구성 및 네트워크 설정
+- `.dockerignore`: 빌드 컨텍스트에서 제외할 파일 목록
+
+데이터 지속성을 위해 다음 볼륨이 마운트됩니다:
+- `./data:/app/data`: 문서 및 벡터 저장소 데이터
+- `./.env:/app/.env`: 환경 변수 파일
+
+### 도커 컨테이너 관리
+
+```bash
+# 컨테이너 로그 확인
+docker compose logs -f rag-api
+
+# 컨테이너 내부 접속
+docker compose exec rag-api bash
+
+# 컨테이너 재시작
+docker compose restart rag-api
+
+# 서비스 업데이트 (코드 변경 후)
+docker compose up -d --build rag-api
+```
 
 ## 예제 요청
 
